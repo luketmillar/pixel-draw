@@ -1,11 +1,13 @@
 import React from 'react'
+import { useColor } from '../Model/drawing'
 
 interface IProps {
-    onClick: React.MouseEventHandler
-    color?: string
+    row: number
+    column: number
 }
-const Cell = ({ onClick, color }: IProps) => {
-    return <div onClick={onClick} style={{ width: 20, height: 20, backgroundColor: color }} />
+const Cell = ({ row, column }: IProps) => {
+    const color = useColor({ row, column })
+    return <div style={{ width: 20, height: 20, backgroundColor: color }} />
 }
 
-export default Cell
+export default React.memo(Cell)

@@ -3,6 +3,7 @@ import Background from './Background'
 import Grid from './Grid'
 import { CellSize } from '../Model/size'
 import Cells from './Cells'
+import InputLayer from './InputLayer'
 
 interface IProps {
     width: number
@@ -10,7 +11,6 @@ interface IProps {
 }
 
 const Canvas = (props: IProps) => {
-
     return <div style={{ position: 'relative', width: props.width * CellSize, height: props.height * CellSize }}>
         <Stacked>
             <Background columns={props.width} rows={props.height} backgroundColor={'white'} />
@@ -20,6 +20,9 @@ const Canvas = (props: IProps) => {
         </Stacked>
         <Stacked>
             <Cells columns={props.width} rows={props.height} />
+        </Stacked>
+        <Stacked>
+            <InputLayer columns={props.width} rows={props.height} />
         </Stacked>
     </div>
 }
