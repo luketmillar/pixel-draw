@@ -20,6 +20,7 @@ class Drawing {
 
     public clear() {
         this.cellColors = {}
+        this.notifyAll()
     }
 
     public getColor(cell: Cell) {
@@ -46,6 +47,11 @@ class Drawing {
 
     private notify(cell: Cell) {
         this.subscriptions[getCellKey(cell)]?.forEach(sub => sub(this.getColor(cell)))
+    }
+
+    private notifyAll() {
+        const cellSubscriptions = Array.from(Object.values(this.subscriptions))
+        cellSubscriptions.forEach(subs => subs?.forEach(sub => sub(undefined)))
     }
 }
 

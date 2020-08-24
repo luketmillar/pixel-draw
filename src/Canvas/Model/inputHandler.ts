@@ -24,7 +24,11 @@ class InputHandler {
     }
     private set lastCell(value: Cell | undefined) {
         if (!cellsAreEqual(this._lastCell, value)) {
+            const isFirst = this._lastCell === undefined
             this._lastCell = value
+            if (isFirst) {
+                // notify first
+            }
             if (value !== undefined) {
                 this.subscriptions.forEach(s => s(value))
             }
@@ -49,7 +53,7 @@ class InputHandler {
         }
         this.downOptions = {
             cell,
-            snap: !event.metaKey,
+            snap: event.metaKey,
             position: { x: event.clientX, y: event.clientY }
         }
         this.lastCell = cell

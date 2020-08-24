@@ -1,7 +1,8 @@
 import React from 'react'
 import { CellSize } from '../Model/size'
 import InputHandler from '../Model/inputHandler'
-import DrawTool from '../Tools/DrawTool'
+import { Cell } from '../Model/types'
+import ToolStack from '../Tools/ToolStack'
 
 interface IProps {
     rows: number
@@ -22,9 +23,12 @@ const useInputHandler = (rows: number, columns: number, inputRef: React.RefObjec
         }
     }, [inputRef])
     React.useEffect(() => {
-        const drawTool = new DrawTool()
-        return InputHandler.subscribeCellSelect(drawTool.onCellSelect)
-    }, [])
+        const onCellSelect = (cell: Cell) => {
+            InputHandler.setCanvasRect(inputRef.current!.getBoundingClientRect())
+            ToolStack.currentTool?.onCellSelect(cell)
+        }
+        return InputHandler.subscribeCellSelect(onCellSelect)
+    }, [inputRef])
     return InputHandler
 }
 
