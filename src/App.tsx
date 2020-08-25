@@ -9,7 +9,7 @@ function App() {
       <h1>Pixel Draw</h1>
       <Toolbar />
       <div style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Canvas width={20} height={40} />
+        <Canvas width={40} height={20} />
       </div>
     </>
   )

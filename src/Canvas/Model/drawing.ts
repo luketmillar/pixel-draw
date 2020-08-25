@@ -3,7 +3,7 @@ import { Cell } from "./types"
 
 type CellColorCallback = (color: string | undefined) => void
 
-const getCellKey = (cell: Cell) => `${cell.row}-${cell.column}`
+export const getCellKey = (cell: Cell) => `${cell.row}-${cell.column}`
 
 class Drawing {
     private rows: number = 0
@@ -43,6 +43,13 @@ class Drawing {
         return () => {
             this.subscriptions[key] = this.subscriptions[key]!.filter(cb => cb === callback)
         }
+    }
+
+    public isOnCanvas(cell: Cell) {
+        if (cell.row < 0 || cell.column < 0 || cell.row >= this.rows || cell.column >= this.columns) {
+            return false
+        }
+        return true
     }
 
     private notify(cell: Cell) {

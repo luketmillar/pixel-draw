@@ -4,6 +4,7 @@ import Grid from './Grid'
 import { CellSize } from '../Model/size'
 import Cells from './Cells'
 import InputLayer from './InputLayer'
+import drawing from '../Model/drawing'
 
 interface IProps {
     width: number
@@ -11,6 +12,9 @@ interface IProps {
 }
 
 const Canvas = (props: IProps) => {
+    React.useEffect(() => {
+        drawing.updateSize(props.height, props.width)
+    }, [props.height, props.width])
     return <div style={{ position: 'relative', width: props.width * CellSize, height: props.height * CellSize }}>
         <Stacked>
             <Background columns={props.width} rows={props.height} backgroundColor={'white'} />

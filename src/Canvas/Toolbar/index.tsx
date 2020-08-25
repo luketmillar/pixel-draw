@@ -3,9 +3,11 @@ import ToolStack, { useCurrentTool } from '../Tools/ToolStack'
 import DrawTool from '../Tools/DrawTool'
 import EraseTool from '../Tools/EraseTool'
 import drawing from '../Model/drawing'
+import FillTool from '../Tools/FillTool'
 
 enum Tool {
     Draw,
+    Fill,
     Erase
 }
 
@@ -16,6 +18,8 @@ const useCurrentToolType = () => {
     }
     if (current instanceof DrawTool) {
         return Tool.Draw
+    } else if (current instanceof FillTool) {
+        return Tool.Fill
     } else {
         return Tool.Erase
     }
@@ -25,6 +29,8 @@ const Toolbar = () => {
     const setTool = (toolType: Tool) => {
         if (toolType === Tool.Draw) {
             ToolStack.replace(new DrawTool())
+        } else if (toolType === Tool.Fill) {
+            ToolStack.replace(new FillTool())
         } else {
             ToolStack.replace(new EraseTool())
         }
@@ -37,20 +43,16 @@ const Toolbar = () => {
         setTool(Tool.Draw)
     }, [])
     const changeColor = (color: string) => {
-        (ToolStack.currentTool as DrawTool).penColor = color
+        (ToolStack.currentTool as (DrawTool | FillTool)).penColor = color
     }
-    React.useEffect(() => {
-        if (currentToolType === Tool.Draw) {
-            changeColor('#000')
-        }
-    }, [currentToolType])
     return (
         <div>
             <button style={{ backgroundColor: currentToolType === Tool.Draw ? 'gray' : undefined }} onClick={() => setTool(Tool.Draw)}>Draw</button>
+            <button style={{ backgroundColor: currentToolType === Tool.Fill ? 'gray' : undefined }} onClick={() => setTool(Tool.Fill)}>Fill</button>
             <button style={{ backgroundColor: currentToolType === Tool.Erase ? 'gray' : undefined }} onClick={() => setTool(Tool.Erase)}>Erase</button>
             <button onClick={reset}>Reset</button>
             {
-                currentToolType === Tool.Draw && (
+                (currentToolType === Tool.Draw || currentToolType === Tool.Fill) && (
                     <div>
                         <button onClick={() => changeColor('#000')}>Black</button>
                         <button onClick={() => changeColor('#0F0')}>Green</button>
