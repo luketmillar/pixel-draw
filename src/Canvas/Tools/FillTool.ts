@@ -15,12 +15,12 @@ export default class FillTool extends Tool {
         this.throttleFill(cells, this.penColor)
     }
 
-    private throttleFill = (cells: Cell[], color: string) => {
+    private throttleFill = (cells: Cell[][], color: string) => {
         if (cells.length === 0) {
             return
         }
         requestAnimationFrame(() => {
-            const cellsToDraw = cells.splice(0, 20)
+            const cellsToDraw = cells.shift()!
             cellsToDraw.forEach(cell => {
                 drawing.setColor(cell, color)
             })
@@ -37,27 +37,37 @@ class FillLogic {
     private cells: Record<string, boolean> = {}
     private targetColor: string | undefined
 
-    private cellsToProcess: Cell[] = []
-    private cellsToColor: Cell[] = []
+    private cellsToProcess: Array<Cell | undefined> = []
+    private cellsToColor: Cell[][] = [[]]
 
-    public getFillCells = (cell: Cell): Cell[] => {
+    public getFillCells = (cell: Cell): Cell[][] => {
         this.targetColor = drawing.getColor(cell)
         this.cellsToProcess.push(cell)
-        while (this.cellsToProcess.length > 0) {
-            const cell = this.cellsToProcess.shift()!
-            this.processCell(cell)
+        this.cellsToProcess.push(undefined)
+        while (this.cellsToProcess.filter(c => c !== undefined).length > 0) {
+            const cell = this.cellsToProcess.shift()
+            if (cell === undefined) {
+                this.cellsToProcess.push(undefined)
+                this.cellsToColor.push([])
+            } else {
+                this.processCell(cell)
+            }
         }
         return this.cellsToColor
     }
 
     private processCell = (cell: Cell) => {
-        if (this.wasCellSeen(cell) || drawing.getColor(cell) !== this.targetColor) {
+        if (this.shouldProcess(cell)) {
             return
         }
-        this.cellsToColor.push(cell)
+        this.cellsToColor[this.cellsToColor.length - 1].push(cell)
         this.seeCell(cell)
         const neighbors = this.getNeighbors(cell)
         this.cellsToProcess = [...this.cellsToProcess, ...neighbors]
+    }
+
+    private shouldProcess = (cell: Cell) => {
+        return this.wasCellSeen(cell) || drawing.getColor(cell) !== this.targetColor
     }
 
     private seeCell = (cell: Cell) => {
