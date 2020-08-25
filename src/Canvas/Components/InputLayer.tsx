@@ -14,7 +14,7 @@ const useInputHandler = (rows: number, columns: number, inputRef: React.RefObjec
         InputHandler.updateSize(rows, columns)
     }, [columns, rows])
     React.useEffect(() => {
-        InputHandler.setCanvasRect(inputRef.current!.getBoundingClientRect())
+        InputHandler.setRef(inputRef.current!)
         window.addEventListener('mousemove', InputHandler.onMouseMove)
         window.addEventListener('mouseup', InputHandler.onMouseUp)
         return () => {
@@ -23,11 +23,11 @@ const useInputHandler = (rows: number, columns: number, inputRef: React.RefObjec
         }
     }, [inputRef])
     React.useEffect(() => {
-        const onCellSelect = (cell: Cell) => {
-            InputHandler.setCanvasRect(inputRef.current!.getBoundingClientRect())
-            ToolStack.currentTool?.onCellSelect(cell)
-        }
-        return InputHandler.subscribeCellSelect(onCellSelect)
+        return InputHandler.subscribe({
+            onStart: (cell: Cell) => ToolStack.currentTool?.onStart(cell),
+            onMove: (cell: Cell) => ToolStack.currentTool?.onMove(cell),
+            onEnd: (cell: Cell) => ToolStack.currentTool?.onEnd(cell),
+        })
     }, [inputRef])
     return InputHandler
 }

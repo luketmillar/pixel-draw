@@ -5,6 +5,11 @@ export type Position = { x: number, y: number }
 export type Event = MouseEvent | React.MouseEvent
 export type Size = { width: number, height: number }
 export type CellCallback = (cell: Cell) => void
+export type Callbacks = {
+    onStart: CellCallback,
+    onMove: CellCallback,
+    onEnd: CellCallback
+}
 export enum Direction {
     NS,
     EW

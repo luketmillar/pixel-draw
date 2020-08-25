@@ -36,11 +36,30 @@ const Toolbar = () => {
     React.useEffect(() => {
         setTool(Tool.Draw)
     }, [])
+    const changeColor = (color: string) => {
+        (ToolStack.currentTool as DrawTool).penColor = color
+    }
+    React.useEffect(() => {
+        if (currentToolType === Tool.Draw) {
+            changeColor('#000')
+        }
+    }, [currentToolType])
     return (
         <div>
             <button style={{ backgroundColor: currentToolType === Tool.Draw ? 'gray' : undefined }} onClick={() => setTool(Tool.Draw)}>Draw</button>
             <button style={{ backgroundColor: currentToolType === Tool.Erase ? 'gray' : undefined }} onClick={() => setTool(Tool.Erase)}>Erase</button>
             <button onClick={reset}>Reset</button>
+            {
+                currentToolType === Tool.Draw && (
+                    <div>
+                        <button onClick={() => changeColor('#000')}>Black</button>
+                        <button onClick={() => changeColor('#0F0')}>Green</button>
+                        <button onClick={() => changeColor('#00F')}>Blue</button>
+                        <button onClick={() => changeColor('#F00')}>Red</button>
+                        <button onClick={() => changeColor('#FFF')}>White</button>
+                    </div>
+                )
+            }
         </div>
     )
 }

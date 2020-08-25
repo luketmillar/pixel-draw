@@ -1,5 +1,5 @@
 import { CellSize } from './size'
-import { Direction, Cell, Event, CellCallback, cellsAreEqual, Position } from './types'
+import { Direction, Cell, Event, cellsAreEqual, Position, Callbacks } from './types'
 import { minMax } from '../math'
 
 interface DownOptions {
@@ -9,10 +9,19 @@ interface DownOptions {
     mouseDirection?: Direction | undefined
 }
 
+enum InputEvent {
+    Start,
+    Move,
+    End
+}
+
 class InputHandler {
     private rows: number = 0
     private columns: number = 0
-    private canvasRect: DOMRect | undefined
+    private ref: HTMLDivElement | undefined
+    private get canvasRect(): DOMRect | undefined {
+        return this.ref?.getBoundingClientRect()
+    }
 
     private downOptions: DownOptions | undefined
     private get isDrawing() {
@@ -24,26 +33,22 @@ class InputHandler {
     }
     private set lastCell(value: Cell | undefined) {
         if (!cellsAreEqual(this._lastCell, value)) {
-            const isFirst = this._lastCell === undefined
             this._lastCell = value
-            if (isFirst) {
-                // notify first
-            }
             if (value !== undefined) {
-                this.subscriptions.forEach(s => s(value))
+                this.notify(InputEvent.Move, value)
             }
         }
     }
 
-    private subscriptions: Array<CellCallback> = []
+    private subscriptions: Array<Callbacks> = []
 
     public updateSize(rows: number, columns: number) {
         this.rows = rows
         this.columns = columns
     }
 
-    public setCanvasRect(rect: DOMRect) {
-        this.canvasRect = rect
+    public setRef = (ref: HTMLDivElement) => {
+        this.ref = ref
     }
 
     public onMouseDown = (event: Event) => {
@@ -57,6 +62,7 @@ class InputHandler {
             position: { x: event.clientX, y: event.clientY }
         }
         this.lastCell = cell
+        this.notify(InputEvent.Start, cell)
     }
 
     public onMouseMove = (event: Event) => {
@@ -93,14 +99,17 @@ class InputHandler {
     }
 
     public onMouseUp = (event: Event) => {
+        if (this.lastCell !== undefined) {
+            this.notify(InputEvent.End, this.lastCell)
+        }
         this.downOptions = undefined
         this.lastCell = undefined
     }
 
-    public subscribeCellSelect(onCellSelect: CellCallback) {
-        this.subscriptions.push(onCellSelect)
+    public subscribe(callbacks: Callbacks) {
+        this.subscriptions.push(callbacks)
         return () => {
-            this.subscriptions = this.subscriptions.filter(s => s !== onCellSelect)
+            this.subscriptions = this.subscriptions.filter(c => c !== callbacks)
         }
     }
 
@@ -129,6 +138,23 @@ class InputHandler {
         const ew = Math.abs(position.x - downPosition.x)
         const ns = Math.abs(position.y - downPosition.y)
         return ew > ns ? Direction.EW : Direction.NS
+    }
+
+    private notify = (event: InputEvent, cell: Cell) => {
+        this.subscriptions.forEach(s => {
+            switch (event) {
+                case InputEvent.Start:
+                    s.onStart(cell)
+                    return
+                case InputEvent.Move:
+                    s.onMove(cell)
+                    return
+                case InputEvent.End:
+                    s.onEnd(cell)
+                    return
+            }
+        })
+
     }
 }
 
