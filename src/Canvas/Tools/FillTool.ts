@@ -11,16 +11,29 @@ export default class FillTool extends Tool {
 
     public onStart = (cell: Cell) => {
         const logic = new FillLogic()
-        logic.getFillCells(cell).forEach(cell => {
-            drawing.setColor(cell, this.penColor)
-        })
+        const cells = logic.getFillCells(cell)
+        this.throttleFill(cells, this.penColor)
+        // cells.forEach(cell => {
+        //     drawing.setColor(cell, this.penColor)
+        // })
     }
 
-    public onMove = (cell: Cell) => {
+    private throttleFill = (cells: Cell[], color: string) => {
+        if (cells.length === 0) {
+            return
+        }
+        setTimeout(() => {
+            const cellsToDraw = cells.splice(0, 20)
+            cellsToDraw.forEach(cell => {
+                drawing.setColor(cell, color)
+            })
+            this.throttleFill(cells, color)
+        }, 0)
     }
 
-    public onEnd = (cell: Cell) => {
-    }
+    public onMove = (cell: Cell) => { }
+
+    public onEnd = (cell: Cell) => { }
 }
 
 class FillLogic {
