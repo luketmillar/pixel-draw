@@ -13,22 +13,19 @@ export default class FillTool extends Tool {
         const logic = new FillLogic()
         const cells = logic.getFillCells(cell)
         this.throttleFill(cells, this.penColor)
-        // cells.forEach(cell => {
-        //     drawing.setColor(cell, this.penColor)
-        // })
     }
 
     private throttleFill = (cells: Cell[], color: string) => {
         if (cells.length === 0) {
             return
         }
-        setTimeout(() => {
+        requestAnimationFrame(() => {
             const cellsToDraw = cells.splice(0, 20)
             cellsToDraw.forEach(cell => {
                 drawing.setColor(cell, color)
             })
             this.throttleFill(cells, color)
-        }, 0)
+        })
     }
 
     public onMove = (cell: Cell) => { }
@@ -40,19 +37,27 @@ class FillLogic {
     private cells: Record<string, boolean> = {}
     private targetColor: string | undefined
 
+    private cellsToProcess: Cell[] = []
+    private cellsToColor: Cell[] = []
+
     public getFillCells = (cell: Cell): Cell[] => {
         this.targetColor = drawing.getColor(cell)
-        return this.innerGetFillCells(cell)
+        this.cellsToProcess.push(cell)
+        while (this.cellsToProcess.length > 0) {
+            const cell = this.cellsToProcess.shift()!
+            this.processCell(cell)
+        }
+        return this.cellsToColor
     }
 
-    private innerGetFillCells = (cell: Cell): Cell[] => {
+    private processCell = (cell: Cell) => {
         if (this.wasCellSeen(cell) || drawing.getColor(cell) !== this.targetColor) {
-            return []
+            return
         }
+        this.cellsToColor.push(cell)
         this.seeCell(cell)
         const neighbors = this.getNeighbors(cell)
-        const recursiveNeighbors = neighbors.reduce((all: Cell[], neighbor) => ([...all, ...this.innerGetFillCells(neighbor)]), [])
-        return [cell, ...recursiveNeighbors]
+        this.cellsToProcess = [...this.cellsToProcess, ...neighbors]
     }
 
     private seeCell = (cell: Cell) => {
