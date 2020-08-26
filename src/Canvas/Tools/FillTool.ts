@@ -22,7 +22,7 @@ export default class FillTool extends Tool {
         requestAnimationFrame(() => {
             const cellsToDraw = cells.shift()!
             cellsToDraw.forEach(cell => {
-                drawing.setColor(cell, color)
+                drawing.setColor(getCellKey(cell), color)
             })
             this.throttleFill(cells, color)
         })
@@ -41,7 +41,7 @@ class FillLogic {
     private cellsToColor: Cell[][] = [[]]
 
     public getFillCells = (cell: Cell): Cell[][] => {
-        this.targetColor = drawing.getColor(cell)
+        this.targetColor = drawing.getColor(getCellKey(cell))
         this.cellsToProcess.push(cell)
         this.cellsToProcess.push(undefined)
         while (this.cellsToProcess.filter(c => c !== undefined).length > 0) {
@@ -67,7 +67,7 @@ class FillLogic {
     }
 
     private shouldProcess = (cell: Cell) => {
-        return this.wasCellSeen(cell) || drawing.getColor(cell) !== this.targetColor
+        return this.wasCellSeen(cell) || drawing.getColor(getCellKey(cell)) !== this.targetColor
     }
 
     private seeCell = (cell: Cell) => {

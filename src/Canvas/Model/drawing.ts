@@ -9,7 +9,9 @@ class Drawing {
     private rows: number = 0
     private columns: number = 0
 
+    private isOverriding: boolean = false
     private cellColors: Record<string, string | undefined> = {}
+    private overrides: Record<string, string | null> = {}
 
     private subscriptions: Record<string, CellColorCallback[] | undefined> = {}
 
@@ -23,25 +25,36 @@ class Drawing {
         this.notifyAll()
     }
 
-    public getColor(cell: Cell) {
-        return this.cellColors[getCellKey(cell)]
+    public getColor(cellKey: string) {
+        const overrideColor = this.overrides[cellKey]
+        if (overrideColor !== undefined) {
+            // this is weird but we do this so that you CAN override a cell to undefined, separetely fron unsetting an override
+            if (overrideColor === null) {
+                return undefined
+            }
+            return overrideColor
+        }
+        return this.cellColors[cellKey]
     }
 
-    public setColor(cell: Cell, color: string | undefined) {
-        this.cellColors[getCellKey(cell)] = color
-        this.notify(cell)
+    public setColor(cellKey: string, color: string | undefined) {
+        if (this.isOverriding) {
+            this.setOverride(cellKey, color)
+        } else {
+            this.cellColors[cellKey] = color
+        }
+        this.notify(cellKey)
     }
 
-    public subscribeColor(cell: Cell, callback: CellColorCallback) {
-        const key = getCellKey(cell)
-        let subs = this.subscriptions[key]
+    public subscribeColor(cellKey: string, callback: CellColorCallback) {
+        let subs = this.subscriptions[cellKey]
         if (subs === undefined) {
-            this.subscriptions[key] = []
-            subs = this.subscriptions[key]!
+            this.subscriptions[cellKey] = []
+            subs = this.subscriptions[cellKey]!
         }
         subs.push(callback)
         return () => {
-            this.subscriptions[key] = this.subscriptions[key]!.filter(cb => cb === callback)
+            this.subscriptions[cellKey] = this.subscriptions[cellKey]!.filter(cb => cb === callback)
         }
     }
 
@@ -52,8 +65,52 @@ class Drawing {
         return true
     }
 
-    private notify(cell: Cell) {
-        this.subscriptions[getCellKey(cell)]?.forEach(sub => sub(this.getColor(cell)))
+    public override(fn: () => void) {
+        try {
+            this.startOverride()
+            fn()
+        } finally {
+            this.endOverride()
+        }
+    }
+
+    public startOverride() {
+        this.isOverriding = true
+    }
+
+    public endOverride(cancel: boolean = false) {
+        this.isOverriding = false
+        if (!cancel) {
+            const cells = Array.from(Object.keys(this.overrides))
+            cells.forEach(cellKey => {
+                let overrideValue: string | null | undefined = this.overrides[cellKey]
+                if (overrideValue === undefined) {
+                    return
+                }
+                if (overrideValue === null) {
+                    overrideValue = undefined
+                }
+                this.cellColors[cellKey] = overrideValue
+                this.notify(cellKey)
+            })
+        }
+        this.overrides = {}
+    }
+
+    private setOverride(cellKey: string, color: string | null | undefined) {
+        if (color === undefined) {
+            this.deleteOverride(cellKey)
+        } else {
+            this.overrides[cellKey] = color
+        }
+    }
+
+    public deleteOverride(cellKey: string) {
+        delete this.overrides[cellKey]
+    }
+
+    private notify(cellKey: string) {
+        this.subscriptions[cellKey]?.forEach(sub => sub(this.getColor(cellKey)))
     }
 
     private notifyAll() {
@@ -62,11 +119,11 @@ class Drawing {
     }
 }
 
-export const useColor = (cell: Cell) => {
-    const [color, setColor] = React.useState<string | undefined>(drawing.getColor(cell))
+export const useColor = (cellKey: string) => {
+    const [color, setColor] = React.useState<string | undefined>(drawing.getColor(cellKey))
     React.useEffect(() => {
-        return drawing.subscribeColor(cell, setColor)
-    }, [cell])
+        return drawing.subscribeColor(cellKey, setColor)
+    }, [cellKey])
     return color
 }
 

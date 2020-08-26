@@ -61,8 +61,8 @@ class InputHandler {
             snap: event.metaKey,
             position: { x: event.clientX, y: event.clientY }
         }
-        this.lastCell = cell
         this.notify(InputEvent.Start, cell)
+        this.lastCell = cell
     }
 
     public onMouseMove = (event: Event) => {

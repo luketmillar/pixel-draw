@@ -1,6 +1,6 @@
 import Tool from "./BaseTool"
 import { Cell } from "../Model/types"
-import drawing from "../Model/drawing"
+import drawing, { getCellKey } from "../Model/drawing"
 
 export default class DrawTool extends Tool {
     public penColor: string = '#000'
@@ -10,14 +10,16 @@ export default class DrawTool extends Tool {
     }
 
     public onStart = (cell: Cell) => {
-        drawing.setColor(cell, this.penColor)
+        drawing.startOverride()
+        drawing.setColor(getCellKey(cell), this.penColor)
     }
 
     public onMove = (cell: Cell) => {
-        drawing.setColor(cell, this.penColor)
+        drawing.setColor(getCellKey(cell), this.penColor)
     }
 
     public onEnd = (cell: Cell) => {
-        drawing.setColor(cell, this.penColor)
+        drawing.setColor(getCellKey(cell), this.penColor)
+        drawing.endOverride()
     }
 }
