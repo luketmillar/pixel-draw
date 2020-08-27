@@ -1,4 +1,5 @@
 import React from 'react'
+import UndoStack from '../Model/undo'
 import ToolStack, { useCurrentTool } from '../Tools/ToolStack'
 import DrawTool from '../Tools/DrawTool'
 import EraseTool from '../Tools/EraseTool'
@@ -47,10 +48,15 @@ const Toolbar = () => {
     }
     return (
         <div>
-            <button style={{ backgroundColor: currentToolType === Tool.Draw ? 'gray' : undefined }} onClick={() => setTool(Tool.Draw)}>Draw</button>
-            <button style={{ backgroundColor: currentToolType === Tool.Fill ? 'gray' : undefined }} onClick={() => setTool(Tool.Fill)}>Fill</button>
-            <button style={{ backgroundColor: currentToolType === Tool.Erase ? 'gray' : undefined }} onClick={() => setTool(Tool.Erase)}>Erase</button>
-            <button onClick={reset}>Reset</button>
+            <div style={{ display: 'flex' }}>
+                <button style={{ backgroundColor: currentToolType === Tool.Draw ? 'gray' : undefined }} onClick={() => setTool(Tool.Draw)}>Draw</button>
+                <button style={{ backgroundColor: currentToolType === Tool.Fill ? 'gray' : undefined }} onClick={() => setTool(Tool.Fill)}>Fill</button>
+                <button style={{ backgroundColor: currentToolType === Tool.Erase ? 'gray' : undefined }} onClick={() => setTool(Tool.Erase)}>Erase</button>
+                <button onClick={reset}>Reset</button>
+                <div style={{ width: 10 }} />
+                <button onClick={() => UndoStack.undo()}>Undo</button>
+                <button onClick={() => UndoStack.redo()}>Redo</button>
+            </div>
             {
                 (currentToolType === Tool.Draw || currentToolType === Tool.Fill) && (
                     <div>

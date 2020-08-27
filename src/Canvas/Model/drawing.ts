@@ -1,6 +1,7 @@
 import React from 'react'
 import { Cell } from "./types"
 import Overrides from './overrides'
+import UndoStack, { Undo } from './undo'
 
 type CellColorCallback = (color: string | undefined) => void
 
@@ -22,7 +23,10 @@ class Drawing {
     }
 
     public clear() {
+        const updatedValues = Array.from(Object.keys(this.cellColors)).map(cellKey => ({ cellKey, value: undefined }))
+        const undo = this.createUndo(updatedValues)
         this.cellColors = {}
+        UndoStack.push(undo)
         this.notifyAll()
     }
 
@@ -38,11 +42,66 @@ class Drawing {
         if (this.isOverriding) {
             this.overrides.set(cellKey, color)
         } else {
+            const undo = this.createUndo([{ cellKey, value: color }])
             this.cellColors[cellKey] = color
+            UndoStack.push(undo)
         }
         this.notify(cellKey)
     }
 
+    public isOnCanvas(cell: Cell) {
+        if (cell.row < 0 || cell.column < 0 || cell.row >= this.rows || cell.column >= this.columns) {
+            return false
+        }
+        return true
+    }
+
+    // override stuff
+    public startOverride() {
+        this.isOverriding = true
+    }
+    public endOverride(cancel: boolean = false) {
+        this.isOverriding = false
+        if (!cancel) {
+            this.commitOverrides()
+        }
+        this.overrides.clearAll()
+    }
+    private commitOverrides = () => {
+        const cellsOverrides = this.overrides.getValues()
+        if (cellsOverrides.length === 0) {
+            return
+        }
+        const undo = this.createUndo(cellsOverrides)
+        cellsOverrides.forEach(({ cellKey, value }) => {
+            this.cellColors[cellKey] = value
+            this.notify(cellKey)
+        })
+        UndoStack.push(undo)
+    }
+
+    // undo stuff
+    public applyUndo = (undo: Undo) => {
+        undo.changes.forEach(({ cellKey, before }) => {
+            this.cellColors[cellKey] = before
+            this.notify(cellKey)
+        })
+    }
+    public applyRedo = (undo: Undo) => {
+        undo.changes.forEach(({ cellKey, after }) => {
+            this.cellColors[cellKey] = after
+            this.notify(cellKey)
+        })
+    }
+    private createUndo(valuesToCommit: Array<{ cellKey: string, value: string | undefined }>) {
+        const currentValues = valuesToCommit.map(({ cellKey, value }) => {
+            const currentValue = this.cellColors[cellKey]
+            return { cellKey, before: currentValue, after: value }
+        })
+        return new Undo(currentValues)
+    }
+
+    // notify stuff
     public subscribeColor(cellKey: string, callback: CellColorCallback) {
         let subs = this.subscriptions[cellKey]
         if (subs === undefined) {
@@ -54,49 +113,9 @@ class Drawing {
             this.subscriptions[cellKey] = this.subscriptions[cellKey]!.filter(cb => cb === callback)
         }
     }
-
-    public isOnCanvas(cell: Cell) {
-        if (cell.row < 0 || cell.column < 0 || cell.row >= this.rows || cell.column >= this.columns) {
-            return false
-        }
-        return true
-    }
-
-    public override(fn: () => void) {
-        try {
-            this.startOverride()
-            fn()
-        } finally {
-            this.endOverride()
-        }
-    }
-
-    public startOverride() {
-        this.isOverriding = true
-    }
-
-    public endOverride(cancel: boolean = false) {
-        this.isOverriding = false
-        if (!cancel) {
-            this.commitOverrides()
-        }
-        this.overrides.clearAll()
-    }
-
-    private commitOverrides = () => {
-        const cellsOverrides = this.overrides.getValues()
-        const cellKeys = Array.from(Object.keys(cellsOverrides))
-        cellKeys.forEach(cellKey => {
-            const overrideValue = cellsOverrides[cellKey]
-            this.cellColors[cellKey] = overrideValue
-            this.notify(cellKey)
-        })
-    }
-
     private notify(cellKey: string) {
         this.subscriptions[cellKey]?.forEach(sub => sub(this.getColor(cellKey)))
     }
-
     private notifyAll() {
         const cellSubscriptions = Array.from(Object.values(this.subscriptions))
         cellSubscriptions.forEach(subs => subs?.forEach(sub => sub(undefined)))

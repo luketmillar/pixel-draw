@@ -19,14 +19,12 @@ export default class Overrides {
     }
 
     public getValues = () => {
-        const overrideValues: Record<string, string | undefined> = {}
-        Array.from(Object.keys(this.values)).forEach(cellKey => {
+        return Array.from(Object.keys(this.values)).map(cellKey => {
             const override = this.get(cellKey)
             if (override === undefined) {
-                return
+                return undefined
             }
-            overrideValues[cellKey] = override.value
-        })
-        return overrideValues
+            return { cellKey, value: override.value }
+        }).filter(o => o !== undefined) as Array<{ cellKey: string, value: string | undefined }>
     }
 }
