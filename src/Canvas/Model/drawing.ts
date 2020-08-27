@@ -1,5 +1,6 @@
 import React from 'react'
 import { Cell } from "./types"
+import Overrides from './overrides'
 
 type CellColorCallback = (color: string | undefined) => void
 
@@ -11,7 +12,7 @@ class Drawing {
 
     private isOverriding: boolean = false
     private cellColors: Record<string, string | undefined> = {}
-    private overrides: Record<string, string | null> = {}
+    private overrides = new Overrides()
 
     private subscriptions: Record<string, CellColorCallback[] | undefined> = {}
 
@@ -26,20 +27,16 @@ class Drawing {
     }
 
     public getColor(cellKey: string) {
-        const overrideColor = this.overrides[cellKey]
-        if (overrideColor !== undefined) {
-            // this is weird but we do this so that you CAN override a cell to undefined, separetely fron unsetting an override
-            if (overrideColor === null) {
-                return undefined
-            }
-            return overrideColor
+        const override = this.overrides.get(cellKey)
+        if (override !== undefined) {
+            return override.value
         }
         return this.cellColors[cellKey]
     }
 
     public setColor(cellKey: string, color: string | undefined) {
         if (this.isOverriding) {
-            this.setOverride(cellKey, color)
+            this.overrides.set(cellKey, color)
         } else {
             this.cellColors[cellKey] = color
         }
@@ -81,32 +78,19 @@ class Drawing {
     public endOverride(cancel: boolean = false) {
         this.isOverriding = false
         if (!cancel) {
-            const cells = Array.from(Object.keys(this.overrides))
-            cells.forEach(cellKey => {
-                let overrideValue: string | null | undefined = this.overrides[cellKey]
-                if (overrideValue === undefined) {
-                    return
-                }
-                if (overrideValue === null) {
-                    overrideValue = undefined
-                }
-                this.cellColors[cellKey] = overrideValue
-                this.notify(cellKey)
-            })
+            this.commitOverrides()
         }
-        this.overrides = {}
+        this.overrides.clearAll()
     }
 
-    private setOverride(cellKey: string, color: string | null | undefined) {
-        if (color === undefined) {
-            this.deleteOverride(cellKey)
-        } else {
-            this.overrides[cellKey] = color
-        }
-    }
-
-    public deleteOverride(cellKey: string) {
-        delete this.overrides[cellKey]
+    private commitOverrides = () => {
+        const cellsOverrides = this.overrides.getValues()
+        const cellKeys = Array.from(Object.keys(cellsOverrides))
+        cellKeys.forEach(cellKey => {
+            const overrideValue = cellsOverrides[cellKey]
+            this.cellColors[cellKey] = overrideValue
+            this.notify(cellKey)
+        })
     }
 
     private notify(cellKey: string) {

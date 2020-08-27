@@ -12,11 +12,13 @@ export default class FillTool extends Tool {
     public onStart = (cell: Cell) => {
         const logic = new FillLogic()
         const cells = logic.getFillCells(cell)
+        drawing.startOverride()
         this.throttleFill(cells, this.penColor)
     }
 
     private throttleFill = (cells: Cell[][], color: string) => {
         if (cells.length === 0) {
+            drawing.endOverride()
             return
         }
         requestAnimationFrame(() => {

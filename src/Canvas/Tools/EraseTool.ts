@@ -4,6 +4,7 @@ import drawing, { getCellKey } from "../Model/drawing"
 
 export default class EraseTool extends Tool {
     public onStart = (cell: Cell) => {
+        drawing.startOverride()
         drawing.setColor(getCellKey(cell), undefined)
     }
 
@@ -13,5 +14,6 @@ export default class EraseTool extends Tool {
 
     public onEnd = (cell: Cell) => {
         drawing.setColor(getCellKey(cell), undefined)
+        drawing.endOverride()
     }
 }
