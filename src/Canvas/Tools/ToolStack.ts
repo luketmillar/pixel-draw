@@ -2,32 +2,25 @@ import Tool from "./BaseTool"
 import React from 'react'
 
 class ToolStack {
-    private tools: Tool[] = []
+    private unsubscribe: (() => void) | undefined
+    private _tool: Tool | undefined
+    private get tool(): Tool | undefined {
+        return this._tool
+    }
+    private set tool(tool: Tool | undefined) {
+        this.unsubscribe?.()
+        this._tool = tool
+        this.unsubscribe = tool?.subscribe(this.notify)
+    }
     private subscriptions: Array<() => void> = []
 
-    public push = (tool: Tool) => {
-        this.tools.push(tool)
-        this.notify()
-    }
-
-    public pop = () => {
-        if (this.tools.length === 0) {
-            return
-        }
-        this.tools = this.tools.slice(0, this.tools.length - 1)
-        this.notify()
-    }
-
     public replace = (tool: Tool) => {
-        this.tools = [tool]
+        this.tool = tool
         this.notify()
     }
 
     public get currentTool() {
-        if (this.tools.length === 0) {
-            return undefined
-        }
-        return this.tools[this.tools.length - 1]
+        return this.tool
     }
 
     public subscribe = (onChange: () => void) => {
@@ -43,12 +36,13 @@ class ToolStack {
 }
 
 export const useCurrentTool = () => {
-    const [tool, setTool] = React.useState(toolStack.currentTool)
+    const [tool, setTool] = React.useState({ tool: toolStack.currentTool })
     React.useEffect(() => {
-        return toolStack.subscribe(() => setTool(toolStack.currentTool))
+        return toolStack.subscribe(() => setTool({ tool: toolStack.currentTool }))
     })
-    return tool
+    return tool.tool
 }
+
 
 const toolStack = new ToolStack()
 

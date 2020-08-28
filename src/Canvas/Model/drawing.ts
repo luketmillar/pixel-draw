@@ -65,7 +65,11 @@ class Drawing {
         if (!cancel) {
             this.commitOverrides()
         }
+        const cellsOverrides = this.overrides.getValues()
         this.overrides.clearAll()
+        cellsOverrides.forEach(({ cellKey }) => {
+            this.notify(cellKey)
+        })
     }
     private commitOverrides = () => {
         const cellsOverrides = this.overrides.getValues()
@@ -75,7 +79,6 @@ class Drawing {
         const undo = this.createUndo(cellsOverrides)
         cellsOverrides.forEach(({ cellKey, value }) => {
             this.cellColors[cellKey] = value
-            this.notify(cellKey)
         })
         UndoStack.push(undo)
     }

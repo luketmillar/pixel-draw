@@ -3,12 +3,6 @@ import { Cell } from "../Model/types"
 import drawing, { getCellKey } from "../Model/drawing"
 
 export default class FillTool extends Tool {
-    public penColor: string = '#000'
-
-    public setPenColor(color: string) {
-        this.penColor = color
-    }
-
     public onStart = (cell: Cell) => {
         const logic = new FillLogic()
         const cells = logic.getFillCells(cell)

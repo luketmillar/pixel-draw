@@ -3,8 +3,6 @@ import { Cell } from "../Model/types"
 import drawing, { getCellKey } from "../Model/drawing"
 
 export default class DrawTool extends Tool {
-    public penColor: string = '#000'
-
     public setPenColor(color: string) {
         this.penColor = color
     }
