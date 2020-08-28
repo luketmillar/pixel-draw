@@ -2,7 +2,9 @@ import Tool from "./BaseTool"
 import { Cell } from "../Model/types"
 import drawing, { getCellKey } from "../Model/drawing"
 
-export default class DrawTool extends Tool {
+class RectangleTool extends Tool {
+    public static type = 'rectangle'
+
     private startCell: Cell | undefined
 
     public setPenColor(color: string) {
@@ -48,3 +50,5 @@ export default class DrawTool extends Tool {
         }
     }
 }
+
+export default new RectangleTool()

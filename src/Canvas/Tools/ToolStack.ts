@@ -38,8 +38,10 @@ class ToolStack {
 export const useCurrentTool = () => {
     const [tool, setTool] = React.useState({ tool: toolStack.currentTool })
     React.useEffect(() => {
-        return toolStack.subscribe(() => setTool({ tool: toolStack.currentTool }))
-    })
+        const unsubscribe = toolStack.subscribe(() => setTool({ tool: toolStack.currentTool }))
+        setTool({ tool: toolStack.currentTool })
+        return unsubscribe
+    }, [])
     return tool.tool
 }
 

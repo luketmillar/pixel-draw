@@ -22,7 +22,11 @@
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": [
+      "eslint:recommended",
+      "plugin:prettier/recommended",
+      "prettier/react"
+    ]
   },
   "browserslist": {
     "production": [
@@ -37,6 +41,9 @@
     ]
   },
   "devDependencies": {
+    "eslint-config-prettier": "^6.11.0",
+    "prettier": "^2.1.1",
+    "prettier-eslint": "^11.0.0",
     "serve": "^11.3.2"
   }
 }

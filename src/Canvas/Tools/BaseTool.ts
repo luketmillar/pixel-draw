@@ -3,6 +3,10 @@ import { Cell } from "../Model/types"
 type Subscription = () => void
 
 export default abstract class Tool {
+    public static type: string
+    public get type(): string {
+        return Tool.type
+    }
     public abstract onStart(cell: Cell): void
     public abstract onMove(cell: Cell): void
     public abstract onEnd(cell: Cell): void

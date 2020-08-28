@@ -2,7 +2,9 @@ import Tool from "./BaseTool"
 import { Cell } from "../Model/types"
 import drawing, { getCellKey } from "../Model/drawing"
 
-export default class FillTool extends Tool {
+class FillTool extends Tool {
+    public static type = 'fill'
+
     public onStart = (cell: Cell) => {
         const logic = new FillLogic()
         const cells = logic.getFillCells(cell)
@@ -28,6 +30,8 @@ export default class FillTool extends Tool {
 
     public onEnd = (cell: Cell) => { }
 }
+
+export default new FillTool()
 
 class FillLogic {
     private cells: Record<string, boolean> = {}

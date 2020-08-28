@@ -2,7 +2,9 @@ import Tool from "./BaseTool"
 import { Cell } from "../Model/types"
 import drawing, { getCellKey } from "../Model/drawing"
 
-export default class EraseTool extends Tool {
+class EraseTool extends Tool {
+    public static type = 'erase'
+
     public onStart = (cell: Cell) => {
         drawing.startOverride()
         drawing.setColor(getCellKey(cell), undefined)
@@ -17,3 +19,4 @@ export default class EraseTool extends Tool {
         drawing.endOverride()
     }
 }
+export default new EraseTool()
