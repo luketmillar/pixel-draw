@@ -115,10 +115,19 @@ class InputHandler {
 
     private cellFromEvent = (e: Event): Cell | undefined => {
         const position = { x: e.clientX - this.canvasRect!.x, y: e.clientY - this.canvasRect!.y }
-        const column = Math.floor(position.x / CellSize)
-        const row = Math.floor(position.y / CellSize)
-        if (row < 0 || row > this.rows - 1 || column < 0 || column > this.columns - 1) {
-            return undefined
+        let column = Math.floor(position.x / CellSize)
+        let row = Math.floor(position.y / CellSize)
+        if (row < 0) {
+            row = 0
+        }
+        if (row > this.rows - 1) {
+            row = this.rows - 1
+        }
+        if (column < 0) {
+            column = 0
+        }
+        if (column > this.columns - 1) {
+            column = this.columns - 1
         }
         return { row, column }
     }
