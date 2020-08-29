@@ -3,8 +3,10 @@ import Canvas from './Canvas/Components/Canvas'
 import './App.css'
 import ColorPicker from './Canvas/ColorPicker'
 import TextTools from './Canvas/Toolbar/TextTools'
+import { useKeyboardCommands } from './Canvas/KeyboardCommands'
 
 function App() {
+  useKeyboardCommands()
   return (
     <>
       <div style={{ height: 100 }} />
