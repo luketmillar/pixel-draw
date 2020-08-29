@@ -2,8 +2,12 @@ import React from 'react'
 
 import Undo from './undo'
 import Redo from './redo'
+import Eraser from './eraser'
+import Pencil from './pencil'
+import Rectangle from './rectangle'
+import Fill from './fill'
 
-const commands = [Undo, Redo]
+const commands = [Undo, Redo, Eraser, Pencil, Rectangle, Fill]
 
 export const useKeyboardCommands = () => {
     const onKeypress = (e: KeyboardEvent) => {
