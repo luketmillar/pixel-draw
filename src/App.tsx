@@ -1,22 +1,22 @@
 import React from 'react'
 import Canvas from './Canvas/Components/Canvas'
 import './App.css'
-import Tools from './Canvas/Toolbar/Tools'
 import ColorPicker from './Canvas/ColorPicker'
+import TextTools from './Canvas/Toolbar/TextTools'
 
 function App() {
   return (
     <>
-      <h1>Pixel Draw</h1>
+      <div style={{ height: 100 }} />
       <div style={{ display: 'flex' }}>
-        <div style={{ display: 'flex' }}>
-          <div style={{ width: 20 }} />
-          <Tools />
-          <div style={{ width: 10 }} />
+        <div style={{ marginLeft: 100, marginRight: 80, width: 270 }}>
+          <TextTools />
+          <div style={{ height: 60 }} />
           <ColorPicker />
         </div>
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Canvas width={40} height={20} />
+        <div style={{ width: 40 }} />
+        <div style={{ flex: 1 }}>
+          <Canvas width={40} height={40} />
         </div>
         <div style={{ width: 100 }} />
       </div>

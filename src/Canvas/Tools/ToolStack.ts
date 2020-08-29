@@ -15,7 +15,11 @@ class ToolStack {
     private subscriptions: Array<() => void> = []
 
     public replace = (tool: Tool) => {
+        const currentColor = this.tool?.penColor
         this.tool = tool
+        if (currentColor) {
+            tool.penColor = currentColor
+        }
         this.notify()
     }
 

@@ -15,7 +15,7 @@ const Canvas = (props: IProps) => {
     React.useEffect(() => {
         drawing.updateSize(props.height, props.width)
     }, [props.height, props.width])
-    return <div style={{ position: 'relative', width: props.width * CellSize, height: props.height * CellSize }}>
+    return <div style={{ boxShadow: '0px 0px 15px rgba(0,0,0,0.1)', position: 'relative', width: props.width * CellSize, height: props.height * CellSize }}>
         <Stacked>
             <Background columns={props.width} rows={props.height} backgroundColor={'white'} />
         </Stacked>
