@@ -95,14 +95,14 @@ const ColorSquare = ({ color, onSelect }: { color: string, onSelect: (color: str
     )
 }
 
-const PreviousButton = ({ onClick }: { onClick: () => void }) => <ArrowButton onClick={onClick} defaultSrc={PreviousImg} hoveredSrc={PreviousImgHovered} />
-const NextButton = ({ onClick }: { onClick: () => void }) => <ArrowButton onClick={onClick} defaultSrc={NextImg} hoveredSrc={NextImgHovered} />
+const PreviousButton = ({ onClick }: { onClick: () => void }) => <ArrowButton onClick={onClick} defaultSrc={PreviousImg} hoveredSrc={PreviousImgHovered} alt="Previous color palette" />
+const NextButton = ({ onClick }: { onClick: () => void }) => <ArrowButton onClick={onClick} defaultSrc={NextImg} hoveredSrc={NextImgHovered} alt="Next color palette" />
 
-const ArrowButton = ({ onClick, defaultSrc, hoveredSrc }: { onClick: () => void, defaultSrc: string, hoveredSrc: string }) => {
+const ArrowButton = ({ onClick, defaultSrc, hoveredSrc, alt }: { onClick: () => void, defaultSrc: string, hoveredSrc: string, alt: string }) => {
     const [isHovered, ref] = useHover()
     return (
         <div ref={ref} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 50, height: 50, cursor: 'pointer' }} onClick={onClick}>
-            <img style={{ imageRendering: 'pixelated' }} src={isHovered ? hoveredSrc : defaultSrc} />
+            <img style={{ imageRendering: 'pixelated' }} src={isHovered ? hoveredSrc : defaultSrc} alt={alt} />
         </div>
     )
 }
