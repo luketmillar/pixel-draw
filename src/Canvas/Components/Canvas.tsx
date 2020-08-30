@@ -1,10 +1,9 @@
 import React from 'react'
-import Background from './Background'
-import Grid from './Grid'
 import { CellSize } from '../Model/size'
-import Cells from './Cells'
 import InputLayer from './InputLayer'
 import drawing from '../Model/drawing'
+import renderer from './renderer'
+import Grid from './Grid'
 
 interface IProps {
     width: number
@@ -12,18 +11,35 @@ interface IProps {
 }
 
 const Canvas = (props: IProps) => {
+    const ref = React.useRef<HTMLCanvasElement>(null)
     React.useEffect(() => {
         drawing.updateSize(props.height, props.width)
     }, [props.height, props.width])
-    return <div style={{ boxShadow: '0px 0px 15px rgba(0,0,0,0.1)', position: 'relative', width: props.width * CellSize, height: props.height * CellSize }}>
-        <Stacked>
-            <Background columns={props.width} rows={props.height} backgroundColor={'white'} />
-        </Stacked>
+    React.useEffect(() => {
+        let frameRequested = false
+        const onChange = () => {
+            if (frameRequested) {
+                return
+            }
+            frameRequested = true
+            window.requestAnimationFrame(() => {
+                frameRequested = false
+                const ctx = ref.current?.getContext('2d')
+                if (!ctx) {
+                    return
+                }
+                renderer.prepare(ctx)
+                renderer.render()
+            })
+        }
+        return drawing.subscribe(onChange)
+    }, [ref])
+    return <div style={{ boxShadow: '0px 0px 15px rgba(0,0,0,0.1)', backgroundColor: 'white', borderRadius: 10, overflow: 'hidden', position: 'relative', width: props.width * CellSize, height: props.height * CellSize }}>
         <Stacked>
             <Grid columns={props.width} rows={props.height} />
         </Stacked>
         <Stacked>
-            <Cells columns={props.width} rows={props.height} />
+            <canvas ref={ref} id="drawing-canvas" width={props.width * CellSize} height={props.height * CellSize} />
         </Stacked>
         <Stacked>
             <InputLayer columns={props.width} rows={props.height} />

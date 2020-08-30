@@ -1,9 +1,6 @@
-import React from 'react'
 import { Cell } from "./types"
 import Overrides from './overrides'
 import UndoStack, { Undo } from './undo'
-
-type CellColorCallback = (color: string | undefined) => void
 
 export const getCellKey = (cell: Cell) => `${cell.row}-${cell.column}`
 
@@ -15,8 +12,6 @@ class Drawing {
     private cellColors: Record<string, string | undefined> = {}
     private overrides = new Overrides()
 
-    private subscriptions: Record<string, CellColorCallback[] | undefined> = {}
-
     public updateSize(rows: number, columns: number) {
         this.rows = rows
         this.columns = columns
@@ -27,7 +22,7 @@ class Drawing {
         const undo = this.createUndo(updatedValues)
         this.cellColors = {}
         UndoStack.push(undo)
-        this.notifyAll()
+        this.notify()
     }
 
     public getColor(cellKey: string) {
@@ -46,7 +41,7 @@ class Drawing {
             this.cellColors[cellKey] = color
             UndoStack.push(undo)
         }
-        this.notify(cellKey)
+        this.notify()
     }
 
     public getCells() {
@@ -76,11 +71,8 @@ class Drawing {
         if (!cancel) {
             this.commitOverrides()
         }
-        const cellsOverrides = this.overrides.getValues()
         this.overrides.clearAll()
-        cellsOverrides.forEach(({ cellKey }) => {
-            this.notify(cellKey)
-        })
+        this.notify()
     }
     private commitOverrides = () => {
         const cellsOverrides = this.overrides.getValues()
@@ -98,14 +90,14 @@ class Drawing {
     public applyUndo = (undo: Undo) => {
         undo.changes.forEach(({ cellKey, before }) => {
             this.cellColors[cellKey] = before
-            this.notify(cellKey)
         })
+        this.notify()
     }
     public applyRedo = (undo: Undo) => {
         undo.changes.forEach(({ cellKey, after }) => {
             this.cellColors[cellKey] = after
-            this.notify(cellKey)
         })
+        this.notify()
     }
     private createUndo(valuesToCommit: Array<{ cellKey: string, value: string | undefined }>) {
         const currentValues = valuesToCommit.map(({ cellKey, value }) => {
@@ -116,32 +108,16 @@ class Drawing {
     }
 
     // notify stuff
-    public subscribeColor(cellKey: string, callback: CellColorCallback) {
-        let subs = this.subscriptions[cellKey]
-        if (subs === undefined) {
-            this.subscriptions[cellKey] = []
-            subs = this.subscriptions[cellKey]!
-        }
-        subs.push(callback)
+    private subs: Array<() => void> = []
+    public subscribe(callback: () => void) {
+        this.subs.push(callback)
         return () => {
-            this.subscriptions[cellKey] = this.subscriptions[cellKey]!.filter(cb => cb === callback)
+            this.subs = this.subs.filter(s => s !== callback)
         }
     }
-    private notify(cellKey: string) {
-        this.subscriptions[cellKey]?.forEach(sub => sub(this.getColor(cellKey)))
+    private notify() {
+        this.subs.forEach(s => s())
     }
-    private notifyAll() {
-        const cellSubscriptions = Array.from(Object.values(this.subscriptions))
-        cellSubscriptions.forEach(subs => subs?.forEach(sub => sub(undefined)))
-    }
-}
-
-export const useColor = (cellKey: string) => {
-    const [color, setColor] = React.useState<string | undefined>(drawing.getColor(cellKey))
-    React.useEffect(() => {
-        return drawing.subscribeColor(cellKey, setColor)
-    }, [cellKey])
-    return color
 }
 
 const drawing = new Drawing()
