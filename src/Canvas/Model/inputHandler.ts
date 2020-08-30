@@ -93,6 +93,8 @@ class InputHandler {
                         this.lastCell = { row: i, column: cell.column }
                     }
                 }
+            } else {
+                // draw the gap
             }
             this.lastCell = cell
         }

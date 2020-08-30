@@ -23,7 +23,7 @@ const Tools = () => {
             <div style={{ height: 5 }} />
             <TextTool name="Rectangle" selected={tool === RectangleTool} onClick={() => setTool(RectangleTool)} />
             <div style={{ height: 5 }} />
-            <TextTool name="Erase" selected={tool === EraseTool} onClick={() => setTool(EraseTool)} />
+            <TextTool name="Eraser" selected={tool === EraseTool} onClick={() => setTool(EraseTool)} />
         </div>
     )
 }
