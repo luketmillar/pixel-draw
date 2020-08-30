@@ -3,9 +3,9 @@ import Canvas from './Canvas/Components/Canvas'
 import './App.css'
 import ColorPicker from './Canvas/ColorPicker'
 import TextTools from './Canvas/Toolbar/TextTools'
-import TextTool from './Canvas/Toolbar/TextTool'
 import { useKeyboardCommands } from './Canvas/KeyboardCommands'
-import drawing from './Canvas/Model/drawing'
+import Menu from './Canvas/Menu'
+import { CellSize } from './Canvas/Model/size'
 
 function App() {
   useKeyboardCommands()
@@ -17,13 +17,14 @@ function App() {
           <TextTools />
           <div style={{ height: 60 }} />
           <ColorPicker />
-          <div style={{ position: 'absolute', bottom: 100 }}>
-            <TextTool name="Start over" onClick={() => drawing.clear()} selected={true} dontOffset={true} />
-          </div>
         </div>
         <div style={{ width: 40 }} />
         <div style={{ flex: 1 }}>
           <Canvas width={40} height={40} />
+          <div style={{ height: 20 }} />
+          <div style={{ display: 'flex', width: 40 * CellSize }}>
+            <Menu />
+          </div>
         </div>
         <div style={{ width: 100 }} />
       </div>
