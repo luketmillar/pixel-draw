@@ -6,8 +6,9 @@ import Eraser from './eraser'
 import Pencil from './pencil'
 import Rectangle from './rectangle'
 import Fill from './fill'
+import Save from './save'
 
-const commands = [Undo, Redo, Eraser, Pencil, Rectangle, Fill]
+const commands = [Undo, Redo, Eraser, Pencil, Rectangle, Fill, Save]
 
 export const useKeyboardCommands = () => {
     const onKeypress = (e: KeyboardEvent) => {

@@ -49,6 +49,17 @@ class Drawing {
         this.notify(cellKey)
     }
 
+    public getCells() {
+        const cells: Array<{ cellKey: string, row: number, column: number, color: string | undefined }> = []
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.columns; j++) {
+                const cellKey = getCellKey({ row: i, column: j })
+                cells.push({ cellKey, row: i, column: j, color: this.getColor(cellKey) })
+            }
+        }
+        return { rows: this.rows, columns: this.columns, cells }
+    }
+
     public isOnCanvas(cell: Cell) {
         if (cell.row < 0 || cell.column < 0 || cell.row >= this.rows || cell.column >= this.columns) {
             return false
