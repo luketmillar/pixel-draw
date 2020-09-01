@@ -6,9 +6,11 @@ import TextTools from './Canvas/Toolbar/TextTools'
 import { useKeyboardCommands } from './Canvas/KeyboardCommands'
 import Menu from './Canvas/Menu'
 import { CellSize } from './Canvas/Model/size'
+import { useLayoutType } from './Canvas/hooks/useWindowSize'
 
 function App() {
   useKeyboardCommands()
+  const layoutType = useLayoutType()
   return (
     <>
       <div className="topSpacer" />
