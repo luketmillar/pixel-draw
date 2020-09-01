@@ -1,7 +1,5 @@
 import { CellSize } from './size'
 import { Direction, Cell, Event, cellsAreEqual, Position, Callbacks } from './types'
-import { minMax } from '../math'
-import undoStack from './undo'
 
 interface DownOptions {
     cell: Cell
@@ -88,20 +86,6 @@ class InputHandler {
                     downOptions.mouseDirection = this.getDirection(position, downOptions.position)
                 }
                 cell = this.snapCell(cell, downOptions.cell, downOptions.mouseDirection!)
-                if (downOptions.mouseDirection === Direction.EW) {
-                    const [min, max] = minMax(cell.column, downOptions.cell.column)
-                    for (let i = min; i < max; i++) {
-                        this.lastCell = { row: cell.row, column: i }
-                    }
-                } else {
-                    const [min, max] = minMax(cell.row, downOptions.cell.row)
-                    for (let i = min; i < max; i++) {
-                        this.lastCell = { row: i, column: cell.column }
-                    }
-                }
-            } else {
-                // draw the gap
-
             }
             this.lastCell = cell
         }
