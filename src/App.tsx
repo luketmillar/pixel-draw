@@ -11,9 +11,9 @@ function App() {
   useKeyboardCommands()
   return (
     <>
-      <div style={{ height: 100 }} />
+      <div className="topSpacer" />
       <div style={{ display: 'flex' }}>
-        <div style={{ marginLeft: 100, marginRight: 80, width: 270 }}>
+        <div className="toolbar">
           <TextTools />
           <div style={{ height: 60 }} />
           <ColorPicker />

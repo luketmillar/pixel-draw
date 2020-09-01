@@ -21,3 +21,24 @@ button {
   margin: unset;
   text-align: left;
 }
+
+.topSpacer {
+  height: 100px;
+}
+
+.toolbar {
+  margin-left: 100px;
+  margin-right: 80px;
+  width: 270px;
+}
+
+@media only screen and (max-height: 1000px) {
+  .toolbar {
+    margin-left: 60px;
+    margin-right: 30px;
+  }
+
+  .topSpacer {
+    height: 40px;
+  }
+}

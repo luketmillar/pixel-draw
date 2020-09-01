@@ -1,1 +1,1 @@
-export const GridColor = '#eaeaea'
+export const GridColor = '#DAECF7'
