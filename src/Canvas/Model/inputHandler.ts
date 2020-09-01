@@ -39,7 +39,6 @@ class InputHandler {
         }
     }
 
-    private lastPosition: Position | undefined
     private subscriptions: Array<Callbacks> = []
 
     public updateSize(rows: number, columns: number) {
@@ -63,7 +62,6 @@ class InputHandler {
         }
         this.notify(InputEvent.Start, cell)
         this.lastCell = cell
-        this.lastPosition = this.downOptions.position
     }
 
     public onMouseMove = (event: Event) => {
@@ -71,7 +69,6 @@ class InputHandler {
             return
         }
         const position = { x: event.clientX, y: event.clientY }
-        this.lastPosition = position
 
         const downOptions = this.downOptions!
         let cell = this.cellFromEvent(event)
@@ -97,7 +94,6 @@ class InputHandler {
         }
         this.downOptions = undefined
         this.lastCell = undefined
-        this.lastPosition = undefined
     }
 
     public subscribe(callbacks: Callbacks) {
