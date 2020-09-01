@@ -14,7 +14,7 @@ class DrawTool extends Tool {
 
     public onStart = (cell: Cell) => {
         drawing.startOverride()
-        drawing.setColor(getCellKey(cell), this.penColor)
+        this.drawPixel(cell)
         this.lastCell = cell
     }
 
@@ -24,15 +24,19 @@ class DrawTool extends Tool {
         }
         const cells = getLineCells(this.lastCell, cell)
         cells.forEach(cell => {
-            drawing.setColor(getCellKey(cell), this.penColor)
+            this.drawPixel(cell)
         })
         this.lastCell = cell
     }
 
     public onEnd = (cell: Cell) => {
-        drawing.setColor(getCellKey(cell), this.penColor)
+        this.drawPixel(cell)
         drawing.endOverride()
         this.lastCell = undefined
+    }
+
+    private drawPixel = (cell: Cell) => {
+        drawing.setColor(getCellKey(cell), this.penColor)
     }
 }
 
