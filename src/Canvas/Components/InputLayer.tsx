@@ -16,31 +16,33 @@ const handleMouseMove = (e: MouseEvent) => {
     InputHandler.onMouseMove({ x: e.clientX, y: e.clientY })
 }
 const handleMouseUp = (e: MouseEvent) => {
-    InputHandler.onMouseUp({ x: e.clientX, y: e.clientY })
+    InputHandler.onMouseUp()
 }
 const handleTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault()
     if (e.touches.length !== 1) {
         return
     }
-    e.preventDefault()
+    e.stopPropagation()
     const touch = e.touches[0]
     InputHandler.onMouseDown({ x: touch.clientX, y: touch.clientY })
 }
 const handleTouchMove = (e: TouchEvent) => {
+    e.preventDefault()
     if (e.touches.length !== 1) {
         return
     }
-    e.preventDefault()
+    e.stopPropagation()
     const touch = e.touches[0]
     InputHandler.onMouseMove({ x: touch.clientX, y: touch.clientY })
 }
 const handleTouchEnd = (e: TouchEvent) => {
-    if (e.touches.length !== 1) {
+    e.preventDefault()
+    if (e.touches.length !== 0) {
         return
     }
-    e.preventDefault()
-    const touch = e.touches[0]
-    InputHandler.onMouseUp({ x: touch.clientX, y: touch.clientY })
+    e.stopPropagation()
+    InputHandler.onMouseUp()
 }
 
 const useInputHandler = (rows: number, columns: number, inputRef: React.RefObject<HTMLDivElement>) => {

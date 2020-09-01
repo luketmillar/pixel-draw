@@ -1,5 +1,5 @@
 import { CellSize } from './size'
-import { Direction, Cell, Event, cellsAreEqual, Position, Callbacks } from './types'
+import { Direction, Cell, cellsAreEqual, Position, Callbacks } from './types'
 
 interface DownOptions {
     cell: Cell
@@ -91,7 +91,7 @@ class InputHandler {
         }
     }
 
-    public onMouseUp = (position: Position) => {
+    public onMouseUp = () => {
         if (this.lastCell !== undefined) {
             this.notify(InputEvent.End, this.lastCell)
         }
