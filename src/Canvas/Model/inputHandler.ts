@@ -1,6 +1,7 @@
 import { CellSize } from './size'
 import { Direction, Cell, Event, cellsAreEqual, Position, Callbacks } from './types'
 import { minMax } from '../math'
+import undoStack from './undo'
 
 interface DownOptions {
     cell: Cell
@@ -40,6 +41,7 @@ class InputHandler {
         }
     }
 
+    private lastPosition: Position | undefined
     private subscriptions: Array<Callbacks> = []
 
     public updateSize(rows: number, columns: number) {
@@ -63,22 +65,26 @@ class InputHandler {
         }
         this.notify(InputEvent.Start, cell)
         this.lastCell = cell
+        this.lastPosition = this.downOptions.position
     }
 
     public onMouseMove = (event: Event) => {
         if (!this.isDrawing) {
             return
         }
+        const position = { x: event.clientX, y: event.clientY }
+        this.lastPosition = position
+
         const downOptions = this.downOptions!
         let cell = this.cellFromEvent(event)
         if (cell === undefined) {
             return
         }
 
+
         if (!cellsAreEqual(this.lastCell, cell)) {
             if (downOptions.snap) {
                 if (downOptions.mouseDirection === undefined) {
-                    const position = { x: event.clientX, y: event.clientY }
                     downOptions.mouseDirection = this.getDirection(position, downOptions.position)
                 }
                 cell = this.snapCell(cell, downOptions.cell, downOptions.mouseDirection!)
@@ -95,6 +101,7 @@ class InputHandler {
                 }
             } else {
                 // draw the gap
+
             }
             this.lastCell = cell
         }
@@ -106,6 +113,7 @@ class InputHandler {
         }
         this.downOptions = undefined
         this.lastCell = undefined
+        this.lastPosition = undefined
     }
 
     public subscribe(callbacks: Callbacks) {
