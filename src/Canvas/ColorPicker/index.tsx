@@ -7,6 +7,7 @@ import PreviousImgHovered from './img/prev_hovered.png'
 import NextImg from './img/next.png'
 import NextImgHovered from './img/next_hovered.png'
 import useHover from '../hooks/useHover'
+import Button from '../Components/Button'
 
 const getColorRows = (index: number) => {
     const colorPalette = [...ColorPalettes[index]]
@@ -87,11 +88,11 @@ const ColorSquare = ({ color, onSelect }: { color: string, onSelect: (color: str
     const currentColor = useCurrentColor()
     const selected = currentColor === color
     return (
-        <div style={{ width: 90, height: 90, backgroundColor: color, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => onSelect(color)}>
+        <Button style={{ width: 90, height: 90, backgroundColor: color, display: 'flex', cursor: 'pointer', alignItems: 'center', justifyContent: 'center' }} onClick={() => onSelect(color)}>
             {selected && <div style={{ width: 40, height: 40, backgroundColor: 'white', border: '4px solid #222', color: '#222', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <div style={{ width: 20, height: 20, backgroundColor: color, border: '4px solid #222', }} />
             </div>}
-        </div>
+        </Button>
     )
 }
 
@@ -101,9 +102,9 @@ const NextButton = ({ onClick }: { onClick: () => void }) => <ArrowButton onClic
 const ArrowButton = ({ onClick, defaultSrc, hoveredSrc, alt }: { onClick: () => void, defaultSrc: string, hoveredSrc: string, alt: string }) => {
     const [isHovered, ref] = useHover()
     return (
-        <button ref={ref} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 50, height: 50, cursor: 'pointer' }} onClick={onClick}>
+        <Button ref={ref} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 50, height: 50, cursor: 'pointer' }} onClick={onClick}>
             <img style={{ imageRendering: 'pixelated' }} src={isHovered ? hoveredSrc : defaultSrc} alt={alt} />
-        </button>
+        </Button>
     )
 }
 

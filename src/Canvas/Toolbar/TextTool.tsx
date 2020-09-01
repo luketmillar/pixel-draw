@@ -1,5 +1,6 @@
 import React from 'react'
 import useHover from '../hooks/useHover'
+import Button from '../Components/Button'
 
 const defaultStyle = {
     position: 'relative',
@@ -8,6 +9,7 @@ const defaultStyle = {
     color: '#b5e3ec',
     fontSize: 48,
     fontWeight: 900,
+    width: '100%',
     transition: 'transform 100ms ease-in-out'
 } as const
 const selectedStyle = {
@@ -22,14 +24,14 @@ interface IProps {
     name: string
     selected: boolean
     dontOffset?: boolean
-    onClick?: React.MouseEventHandler
+    onClick?: () => void
 }
 const Tool = ({ name, selected, dontOffset, onClick }: IProps) => {
     const [isHovered, ref] = useHover()
     return (
-        <button style={{ ...defaultStyle, ...(selected && selectedStyle), ...(dontOffset && { transform: 'translateX(0px)' }), ...(isHovered && hoverStyle) }} onClick={onClick} ref={ref}>
+        <Button style={{ ...defaultStyle, ...(selected && selectedStyle), ...(dontOffset && { transform: 'translateX(0px)' }), ...(isHovered && hoverStyle) }} onClick={onClick} ref={ref}>
             {name}
-        </button>
+        </Button>
     )
 }
 

@@ -1,5 +1,6 @@
 import React from 'react'
 import useHover from '../hooks/useHover'
+import Button from '../Components/Button'
 
 const style = {
     textTransform: 'uppercase',
@@ -20,13 +21,13 @@ const disabledStyle = {
 }
 
 interface IProps {
-    onClick?: React.MouseEventHandler
+    onClick?: () => void
     disabled?: boolean
     label: string
 }
 const MenuItem = (props: IProps) => {
     const [isHovered, ref] = useHover()
-    return <button ref={ref} onClick={props.onClick} style={{ ...style, ...(props.disabled ? disabledStyle : isHovered && hoveredStyle) }}>{props.label}</button>
+    return <Button ref={ref} onClick={props.onClick} style={{ ...style, ...(props.disabled ? disabledStyle : isHovered && hoveredStyle) }}>{props.label}</Button>
 }
 
 export default MenuItem
