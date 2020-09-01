@@ -14,6 +14,10 @@ enum InputEvent {
     End
 }
 
+interface IEventOptions {
+    metaKey?: boolean
+}
+
 class InputHandler {
     private rows: number = 0
     private columns: number = 0
@@ -50,34 +54,33 @@ class InputHandler {
         this.ref = ref
     }
 
-    public onMouseDown = (event: Event) => {
-        const cell = this.cellFromEvent(event)
+    public onMouseDown = (position: Position, options?: IEventOptions) => {
+        const cell = this.cellFromPosition(position)
         if (cell === undefined) {
             return
         }
         this.downOptions = {
             cell,
-            snap: event.metaKey,
-            position: { x: event.clientX, y: event.clientY }
+            snap: !!options?.metaKey,
+            position
         }
         this.notify(InputEvent.Start, cell)
         this.lastCell = cell
     }
 
-    public onMouseMove = (event: Event) => {
+    public onMouseMove = (position: Position) => {
         if (!this.isDrawing) {
             return
         }
-        const position = { x: event.clientX, y: event.clientY }
 
         const downOptions = this.downOptions!
-        let cell = this.cellFromEvent(event)
+        let cell = this.cellFromPosition(position)
         if (cell === undefined) {
             return
         }
 
-
         if (!cellsAreEqual(this.lastCell, cell)) {
+            // no need to process anything if the next moved-to cell is the same as the previous
             if (downOptions.snap) {
                 if (downOptions.mouseDirection === undefined) {
                     downOptions.mouseDirection = this.getDirection(position, downOptions.position)
@@ -88,7 +91,7 @@ class InputHandler {
         }
     }
 
-    public onMouseUp = (event: Event) => {
+    public onMouseUp = (position: Position) => {
         if (this.lastCell !== undefined) {
             this.notify(InputEvent.End, this.lastCell)
         }
@@ -103,10 +106,10 @@ class InputHandler {
         }
     }
 
-    private cellFromEvent = (e: Event): Cell | undefined => {
-        const position = { x: e.clientX - this.canvasRect!.x, y: e.clientY - this.canvasRect!.y }
-        let column = Math.floor(position.x / CellSize)
-        let row = Math.floor(position.y / CellSize)
+    private cellFromPosition = (screenPosition: Position): Cell | undefined => {
+        const canvasPosition = { x: screenPosition.x - this.canvasRect!.x, y: screenPosition.y - this.canvasRect!.y }
+        let column = Math.floor(canvasPosition.x / CellSize)
+        let row = Math.floor(canvasPosition.y / CellSize)
         if (row < 0) {
             row = 0
         }
