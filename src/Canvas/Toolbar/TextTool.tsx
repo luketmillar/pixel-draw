@@ -27,9 +27,9 @@ interface IProps {
 const Tool = ({ name, selected, dontOffset, onClick }: IProps) => {
     const [isHovered, ref] = useHover()
     return (
-        <div style={{ ...defaultStyle, ...(selected && selectedStyle), ...(dontOffset && { transform: 'translateX(0px)' }), ...(isHovered && hoverStyle) }} onClick={onClick} ref={ref}>
+        <button style={{ ...defaultStyle, ...(selected && selectedStyle), ...(dontOffset && { transform: 'translateX(0px)' }), ...(isHovered && hoverStyle) }} onClick={onClick} ref={ref}>
             {name}
-        </div>
+        </button>
     )
 }
 

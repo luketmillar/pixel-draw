@@ -26,7 +26,7 @@ interface IProps {
 }
 const MenuItem = (props: IProps) => {
     const [isHovered, ref] = useHover()
-    return <div ref={ref} onClick={props.onClick} style={{ ...style, ...(props.disabled ? disabledStyle : isHovered && hoveredStyle) }}>{props.label}</ div>
+    return <button ref={ref} onClick={props.onClick} style={{ ...style, ...(props.disabled ? disabledStyle : isHovered && hoveredStyle) }}>{props.label}</button>
 }
 
 export default MenuItem

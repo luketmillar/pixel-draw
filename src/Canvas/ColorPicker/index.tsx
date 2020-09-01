@@ -101,9 +101,9 @@ const NextButton = ({ onClick }: { onClick: () => void }) => <ArrowButton onClic
 const ArrowButton = ({ onClick, defaultSrc, hoveredSrc, alt }: { onClick: () => void, defaultSrc: string, hoveredSrc: string, alt: string }) => {
     const [isHovered, ref] = useHover()
     return (
-        <div ref={ref} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 50, height: 50, cursor: 'pointer' }} onClick={onClick}>
+        <button ref={ref} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 50, height: 50, cursor: 'pointer' }} onClick={onClick}>
             <img style={{ imageRendering: 'pixelated' }} src={isHovered ? hoveredSrc : defaultSrc} alt={alt} />
-        </div>
+        </button>
     )
 }
 

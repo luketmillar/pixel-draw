@@ -9,3 +9,14 @@ body {
   box-sizing: border-box;
   flex-shrink: 0;
 }
+
+button {
+  background-color: unset;
+  border: unset;
+  user-select: none;
+  outline: unset;
+  font-weight: unset;
+  font-family: unset;
+  padding: unset;
+  margin: unset;
+}
