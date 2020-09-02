@@ -12,7 +12,7 @@ function App() {
   useKeyboardCommands()
   const layoutType = useLayoutType()
   return (
-    <>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
       <div className="topSpacer" />
       <div style={{ display: 'flex' }}>
         <div className="toolbar">
@@ -20,7 +20,7 @@ function App() {
           <div style={{ height: 60 }} />
           <ColorPicker />
         </div>
-        <div style={{ width: 40 }} />
+        <div style={{ width: 100 }} />
         <div style={{ flex: 1 }}>
           <Canvas width={40} height={40} />
           <div style={{ height: 20 }} />
@@ -28,9 +28,8 @@ function App() {
             <Menu />
           </div>
         </div>
-        <div style={{ width: 100 }} />
       </div>
-    </>
+    </div>
   )
 }
 
