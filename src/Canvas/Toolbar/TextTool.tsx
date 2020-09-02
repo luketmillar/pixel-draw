@@ -9,7 +9,6 @@ const defaultStyle = {
     color: '#b5e3ec',
     fontSize: 48,
     fontWeight: 900,
-    width: '100%',
     transition: 'transform 100ms ease-in-out'
 } as const
 const selectedStyle = {

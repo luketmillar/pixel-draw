@@ -79,12 +79,12 @@ const ColorPicker = () => {
     )
 }
 
-const useCurrentColor = () => {
+export const useCurrentColor = () => {
     const tool = useCurrentTool()
     return tool?.penColor
 }
 
-const ColorSquare = ({ color, onSelect }: { color: string, onSelect: (color: string) => void }) => {
+export const ColorSquare = ({ color, onSelect }: { color: string, onSelect: (color: string) => void }) => {
     const currentColor = useCurrentColor()
     const selected = currentColor === color
     return (

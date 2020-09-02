@@ -3,7 +3,7 @@ import React from 'react'
 interface IProps {
     onClick?: () => void,
     style?: React.CSSProperties,
-    children: React.ReactNode
+    children?: React.ReactNode
 }
 const Button = React.forwardRef<HTMLButtonElement, IProps>(({ onClick, style, children }: IProps, ref) => {
     const isTouchingRef = React.useRef(false)
