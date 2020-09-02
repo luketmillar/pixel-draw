@@ -22,6 +22,10 @@ button {
   text-align: left;
 }
 
+.topSpacer {
+  height: 100px;
+}
+
 @media only screen and (max-height: 1000px) {
   .topSpacer {
     height: 40px;
