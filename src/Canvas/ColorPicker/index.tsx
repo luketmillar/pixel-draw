@@ -47,9 +47,6 @@ const ColorPicker = () => {
             setColorPalette(colorPaletteIndex + 1)
         }
     }
-    if (tool === EraseTool) {
-        return null
-    }
     const colorRows = getColorRows(colorPaletteIndex)
     return (
         <>
