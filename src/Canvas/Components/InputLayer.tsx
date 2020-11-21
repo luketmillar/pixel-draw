@@ -52,13 +52,13 @@ const useInputHandler = (rows: number, columns: number, inputRef: React.RefObjec
     React.useEffect(() => {
         InputHandler.setRef(inputRef.current!)
         window.addEventListener('mousemove', handleMouseMove)
-        window.addEventListener('touchmove', handleTouchMove)
         window.addEventListener('mouseup', handleMouseUp)
+        window.addEventListener('touchmove', handleTouchMove)
         window.addEventListener('touchend', handleTouchEnd)
         return () => {
             window.removeEventListener('mousemove', handleMouseMove)
-            window.removeEventListener('touchmove', handleTouchMove)
             window.removeEventListener('mouseup', handleMouseUp)
+            window.removeEventListener('touchmove', handleTouchMove)
             window.removeEventListener('touchend', handleTouchEnd)
         }
     }, [inputRef])
