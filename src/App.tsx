@@ -70,6 +70,16 @@ const PhoneApp = () => {
 
 function App() {
   useKeyboardCommands()
+  React.useEffect(() => {
+    const preventBehavior = (e: TouchEvent) => {
+      e.preventDefault()
+    }
+
+    document.addEventListener("touchmove", preventBehavior)
+    return () => {
+      document.removeEventListener("touchmove", preventBehavior)
+    }
+  })
   const layoutType = useLayoutType()
   switch (layoutType) {
     case LayoutType.iPad:
