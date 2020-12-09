@@ -1,6 +1,5 @@
 import React from 'react'
 import ToolStack, { useCurrentTool } from '../Tools/ToolStack'
-import EraseTool from '../Tools/EraseTool'
 import ColorPalettes from './ColorPalettes'
 import PreviousImg from './img/prev.png'
 import PreviousImgHovered from './img/prev_hovered.png'
@@ -22,7 +21,6 @@ let index = 0
 
 const ColorPicker = () => {
     const [colorPaletteIndex, setColorPaletteIndex] = React.useState(index)
-    const tool = useCurrentTool()
     const setColor = (color: string) => {
         if (ToolStack.currentTool) {
             ToolStack.currentTool.penColor = color
